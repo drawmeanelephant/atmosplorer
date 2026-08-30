@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pin the Swift toolchain so the build is deterministic regardless of
+      # what Xcode version the runner image happens to ship.
+      - name: Install Swift 6.1
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.1"
+
+      # The vendored Zig core is not committed (the xcframework is a build
+      # artifact); sync-zat.sh fetches the hash-pinned upstream zat and
+      # regenerates it. Needs network + Zig 0.16+.
+      - name: Install Zig 0.16
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.16.0
+
+      - name: Vendor + test zat-swift
+        run: |
+          cd zat-swift
+          Scripts/sync-zat.sh
+          swift build
+          swift test          # offline; live tests gated behind ZAT_INTEGRATION=1
+
+      - name: Build + test app
+        run: |
+          cd app
+          swift build
+          swift test          # fully offline (ZatFakeTransport + embedded CAR fixture)

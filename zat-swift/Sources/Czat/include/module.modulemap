@@ -1,0 +1,4 @@
+module Czat {
+    header "zat.h"
+    export *
+}

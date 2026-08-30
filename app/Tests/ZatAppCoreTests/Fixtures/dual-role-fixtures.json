@@ -1,0 +1,12 @@
+[
+  {
+    "handle": "thegreatcomictree.bsky.social",
+    "dualDID": "did:plc:z72i7hdynmk6r22z27h6tvur",
+    "note": "primary: 32 follows, 2 packs; follows + packs the Skyfeed generator"
+  },
+  {
+    "handle": "dynamic2034.bsky.social",
+    "dualDID": "did:plc:z72i7hdynmk6r22z27h6tvur",
+    "note": "backup: 15 follows, 1 pack; follows + packs the Skyfeed generator"
+  }
+]
