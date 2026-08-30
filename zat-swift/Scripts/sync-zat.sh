@@ -50,10 +50,23 @@ else
     mkdir -p "$cache_dir"
 
     # `zig fetch` needs a build.zig to run in; a throwaway init project works.
-    fetch_dir="$(mktemp -d)"
-    echo "==> zig fetch $url"
-    fetched=$(cd "$fetch_dir" && zig init >/dev/null 2>&1 && zig fetch "$url" 2>&1 | tail -1)
-    rm -rf "$fetch_dir"
+    # Tangled rate-limits (429s) are transient, so retry with backoff before
+    # giving up — a single 429 shouldn't fail a build.
+    fetched=""
+    attempt=1
+    while [ "$attempt" -le 5 ]; do
+        fetch_dir="$(mktemp -d)"
+        echo "==> zig fetch $url (attempt $attempt/5)"
+        fetched=$(cd "$fetch_dir" && zig init >/dev/null 2>&1 && zig fetch "$url" 2>&1 | tail -1)
+        rm -rf "$fetch_dir"
+        case "$fetched" in
+            "$pin") break ;;
+        esac
+        if [ "$attempt" -lt 5 ]; then
+            sleep $((attempt * 5))
+        fi
+        attempt=$((attempt + 1))
+    done
     case "$fetched" in
         "$pin") ;;
         *)

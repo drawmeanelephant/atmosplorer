@@ -30,10 +30,19 @@ jobs:
         with:
           version: 0.16.0
 
+      # The vendored source is hash-pinned upstream; cache it so CI only
+      # hits Tangled on the first run (it rate-limits 429s) and later runs
+      # skip the fetch entirely.
+      - name: Cache vendored zat source
+        uses: actions/cache@v4
+        with:
+          path: zat-swift/.vendor/zat-src
+          key: zat-src-${{ hashFiles('zat-swift/Scripts/sync-zat.sh', 'zat-swift/Vendor/zat-overlay/**') }}
+
       - name: Vendor + test zat-swift
         run: |
           cd zat-swift
-          Scripts/sync-zat.sh
+          ZAT_SRC_DIR="$PWD/.vendor/zat-src" Scripts/sync-zat.sh
           swift build
           swift test          # offline; live tests gated behind ZAT_INTEGRATION=1
 
