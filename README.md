@@ -10,6 +10,11 @@ which we picked (and wrote the reader-facing pieces for) rather than reimplement
 AT Protocol from scratch in Swift.
 
 ![layers](https://img.shields.io/badge/Zig%20core→Swift%20wrapper→SwiftUI%20app-3%20layers-informational)
+![CI](https://github.com/drawmeanelephant/atmosplorer/actions/workflows/ci.yml/badge.svg)
+
+![The offline repo browser: collections, search, and record detail](docs/browser-screenshot.png)
+
+*The mirrored repo browser, fully offline — collections on the left, search across every record, detail views on the right.*
 
 ## Why
 
@@ -19,8 +24,8 @@ every record block. Download it once, and you own a permanent, offline,
 browseable copy of someone's entire repo. Web clients can't do that; a native
 client can. That's the whole reason this app exists.
 
-Status: the first three roadmap milestones are landed (SwiftUI shell, offline
-cache, browseable content).
+Status: the first four roadmap milestones are landed (SwiftUI shell, offline
+cache, browseable content, local search).
 
 ## Architecture
 
