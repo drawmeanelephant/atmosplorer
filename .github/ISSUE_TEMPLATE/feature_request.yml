@@ -1,0 +1,33 @@
+name: Feature request
+description: A new capability or improvement
+title: "[Feature] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's the problem?
+      description: What can't you do today, or what's annoying about the current workflow?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Proposed solution
+      description: Sketch the idea. It's fine to be rough — this is a discussion starter.
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Which layer would this touch?
+      options:
+        - App (SwiftUI / ZatAppCore)
+        - Swift wrapper (zat-swift)
+        - Zig core (zat-overlay)
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Extra context
+      description: Links, prior art in other ATProto clients, or why it matters to you.

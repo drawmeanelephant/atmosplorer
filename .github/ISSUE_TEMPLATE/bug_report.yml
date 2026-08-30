@@ -1,0 +1,40 @@
+name: Bug report
+description: Something isn't working as expected
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: The handle/DID you used, what you clicked, etc.
+      placeholder: |
+        1. Mirror repo for atproto.com
+        2. Open the collections list
+        3. …
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: macOS version, how you built/ran the app, and whether you ran `Scripts/sync-zat.sh` on a fresh clone.
+      value: |
+        - macOS:
+        - Zig: (output of `zig version`)
+        - Swift: (output of `swift --version`)
+        - Build: `swift run Atmosplorer` / Xcode / other
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / screenshot
+      description: Console output, crash reports (~/Library/Logs/DiagnosticReports), or screenshots.
