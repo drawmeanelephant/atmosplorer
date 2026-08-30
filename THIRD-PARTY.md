@@ -13,6 +13,12 @@ MIT-licensed project, vendored in this workspace and used as-is.
 - **License:** MIT — see `LICENSE` in the vendored zat package
 - **Version in this workspace:** `0.4.5` (see `zat-swift/.vendor/zat-src/build.zig.zon`)
 
+A note on the host: zat lives on [Tangled](https://tangled.org) — a
+federated, AT Protocol–native code forge (Git hosting built on the same
+protocol as Bluesky), not GitHub. This workspace pins it to `0.4.5` by
+package hash in `zat-swift/Scripts/sync-zat.sh` (`ZAT_PIN`), so the fetched
+tarball must match the pin exactly or the sync fails.
+
 zat is the AT Protocol core this app is built on: syntax + identity resolution,
 XRPC clients, CBOR / CAR / MST, firehose + jetstream, OAuth, and crypto. It is
 vendored into `zat-swift/Vendor/ZatC.xcframework` — a C static library

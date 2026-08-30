@@ -42,8 +42,10 @@ app                  — the SwiftUI desktop client (SPM executable), depends
   (`v0.4.5`, MIT): the reader-facing Explorer facade, the CAR record iterator,
   and the C ABI, plus the build wiring. Upstream zat (AT Protocol primitives
   for Zig: syntax + identity resolution, XRPC, CBOR/CAR/MST, firehose +
-  jetstream, OAuth, crypto) is cloned and layered under this overlay by
-  `Scripts/sync-zat.sh`.
+  jetstream, OAuth, crypto) is hosted on [Tangled](https://tangled.org), an
+  AT Protocol–native code forge, at `tangled.org/zat.dev/zat`, and is fetched
+  hash-pinned to `0.4.5` by `Scripts/sync-zat.sh` (see `THIRD-PARTY.md` for
+  the full attribution story).
 - **`zat-swift`** — the Swift package that links the prebuilt static library
   and exposes a typed, Swift-idiomatic API. After *any* change to the Zig core,
   rerun `Scripts/sync-zat.sh` to rebuild and re-vendor the binary products.
@@ -103,8 +105,10 @@ still browses, because the client now owns the whole repo.
 ## Credits & licensing
 
 - **Our code** (`app/`, `zat-swift/`): MIT — see `LICENSE`.
-- **zat** (the Zig core): MIT, © 2025 nate nowack / zzstoatzz.io —
-  vendored into `zat-swift/Vendor/ZatC.xcframework`, its license retained.
+- **zat** (the Zig core): MIT, © 2025 nate nowack / zzstoatzz.io — hosted
+  on Tangled (an AT Protocol–native code forge) at `tangled.org/zat.dev/zat`,
+  pinned to `0.4.5` by hash in `sync-zat.sh`, vendored into
+  `zat-swift/Vendor/ZatC.xcframework`; its license is retained.
 - Deterministic test fixtures from `bluesky-social/atproto-interop-tests`.
 
 See `THIRD-PARTY.md` for the full attribution and vendoring story.
