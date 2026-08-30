@@ -1,0 +1,39 @@
+# Changelog
+
+All notable changes to Atmosplorer are documented here, newest first.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+See `RELEASING.md` for the versioning policy and the tag-and-release process.
+
+## [Unreleased]
+
+### Added
+- `RELEASING.md` (semver policy + release process) and the pointer to it in
+  `README.md` / `CONTRIBUTING.md`.
+
+## [0.1.0] - 2026-08-30
+
+First tagged release: a native macOS desktop client for browsing AT Protocol
+repos, fully offline.
+
+### Added
+- **Offline-first CAR browsing.** Mirror any repo once (e.g. `atproto.com`),
+  then browse every post, like, follow, and starter pack with zero network —
+  collections sidebar, record lists, and detail views.
+- **Local search across every record.** Debounced `.searchable` on the browser
+  with an on-disk index persisted lazily and a background `PreparedIndex` so
+  scoring never blocks the UI. Backed by a benchmark at 275k records
+  (per-keystroke scoring ~0.5s debug / well under 100ms release).
+- **Three-layer architecture, one exit point.** `zat-overlay + upstream zat`
+  (Zig) → `zat-swift` (typed Swift wrapper) → `app` (SwiftUI client); the app
+  never touches the C ABI directly.
+- **Offline-first tests.** 121 tests across the wrapper and app run fully
+  offline (deterministic fixtures + `ZatFakeTransport`); live-network suites
+  are opt-in behind `ZAT_INTEGRATION=1`.
+- **Green CI on every push.** Swift 6.2 + Zig 0.16 pinned, vendored-source
+  cache, and a hardened sync: retry-with-backoff on Tangled rate limits,
+  fallback for a poisoned cache, and idempotent overlay copying.
+
+[Unreleased]: https://github.com/drawmeanelephant/atmosplorer/compare/v0.1.0...main
+[0.1.0]: https://github.com/drawmeanelephant/atmosplorer/releases/tag/v0.1.0

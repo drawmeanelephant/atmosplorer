@@ -1,7 +1,9 @@
 # Releasing Atmosplorer
 
 How to ship a new version. Releases are git tags on `main` plus a GitHub
-release with notes generated from what landed since the last tag.
+release with notes generated from what landed since the last tag. The
+`CHANGELOG.md` at the repo root is the source of truth for what changed per
+release; keep it updated as part of the process below.
 
 ## Versioning: semantic versioning
 
@@ -37,12 +39,14 @@ What counts as the "public API" for semver purposes:
    if the release touches them. If the pinned upstream `zat` changed, keep
    `ZAT_PIN` in `sync-zat.sh` and the version mentions in `README.md` /
    `THIRD-PARTY.md` in sync.
-4. **Changelog fodder.** Collect the commit list since the last tag:
+4. **Update `CHANGELOG.md`.** Move the `Unreleased` entries up into the new
+   version's section (newest first), add the date, and link the new version
+   at the bottom. Dragging entries from `git log` is a good cross-check:
    ```sh
    git log --oneline <last-tag>..HEAD
    ```
-   Group them into what landed for the release notes (features vs. fixes vs.
-   infra) instead of pasting raw commits.
+   Group them into what landed (features vs. fixes vs. infra) instead of
+   pasting raw commits.
 
 ## Tagging and releasing
 
@@ -81,7 +85,8 @@ Follow the `v0.1.0` release as the shape. A good set of notes:
 1. A one-paragraph pitch: what the app is and the headline of this release.
 2. **What has landed** — a checklist of user-visible features and notable
    fixes, one line each. Call out breaking changes (cache-format invalidation,
-   C ABI changes) in their own highlighted bullet.
+   C ABI changes) in their own highlighted bullet. This should track the
+   release notes against what you just wrote in `CHANGELOG.md`.
 3. **Try it** — the clone → `sync-zat.sh` → build/test → `swift run` block from
    the README, so the release page is self-contained for someone who just
    clicked in.
