@@ -46,6 +46,10 @@ jobs:
 
       - name: Vendor + test zat-swift
         run: |
+          # Cache v4 restores files read-only; the overlay copy and zig build
+          # write into the source dir, so grant write permission. No-op when
+          # the cache missed and the dir doesn't exist.
+          chmod -R u+w zat-swift/.vendor/zat-src 2>/dev/null || true
           cd zat-swift
           ZAT_SRC_DIR="$PWD/.vendor/zat-src" Scripts/sync-zat.sh
           swift build
