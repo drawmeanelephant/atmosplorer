@@ -16,11 +16,13 @@ jobs:
       - uses: actions/checkout@v4
 
       # Pin the Swift toolchain so the build is deterministic regardless of
-      # what Xcode version the runner image happens to ship.
-      - name: Install Swift 6.1
+      # what Xcode version the runner image happens to ship. Must be >= 6.2:
+      # the app relies on the SwiftUI View-body MainActor isolation that
+      # landed in 6.2 (the local dev toolchain is newer still).
+      - name: Install Swift 6.2
         uses: swift-actions/setup-swift@v2
         with:
-          swift-version: "6.1"
+          swift-version: "6.2"
 
       # The vendored Zig core is not committed (the xcframework is a build
       # artifact); sync-zat.sh fetches the hash-pinned upstream zat and

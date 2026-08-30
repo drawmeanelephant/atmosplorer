@@ -72,7 +72,9 @@ final class CacheModel: ObservableObject {
         repos.contains { $0.did == did }
     }
 
-    static func formatBytes(_ bytes: Int) -> String {
+    /// Pure formatting helper — callable from any context, so it is
+    /// explicitly nonisolated rather than MainActor-inherited.
+    nonisolated static func formatBytes(_ bytes: Int) -> String {
         let formatter = ByteCountFormatter()
         formatter.countStyle = .file
         return formatter.string(fromByteCount: Int64(bytes))

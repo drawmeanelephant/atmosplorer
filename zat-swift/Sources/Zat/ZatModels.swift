@@ -51,6 +51,12 @@ public struct ZatRecordPage<Value> {
     public let cursor: String?
 }
 
+// Value types over Sendable contents may cross actor boundaries (e.g. an
+// app awaiting `listRecords` from a @MainActor model), so they are Sendable
+// whenever their payload is.
+extension ZatRecord: Sendable where Value: Sendable {}
+extension ZatRecordPage: Sendable where Value: Sendable {}
+
 /// One record decoded from a repo CAR. `path` is the MST key
 /// ("collection/rkey"); `value` is the record body decoded from DAG-CBOR
 /// into `ZatJSONValue` (the same JSON tree used for listRecords).
