@@ -99,8 +99,14 @@ fi
 # ---------------------------------------------------------------------------
 echo "==> overlaying $overlay onto $src_dir"
 mkdir -p "$src_dir/src"
-cp -Rn "$overlay/src/." "$src_dir/src/"
-cp -Rn "$overlay/include/." "$src_dir/include/"
+mkdir -p "$src_dir/include"
+# Fill gaps only: -n never overwrites an existing file. macOS cp exits 1 when
+# -n skips files, so re-running over an already-overlaid source (e.g. a cached
+# checkout) would otherwise be misread as a failure — treat skips as success.
+# The preflight below still fails loudly if a required overlay file is truly
+# missing.
+cp -Rn "$overlay/src/." "$src_dir/src/" || true
+cp -Rn "$overlay/include/." "$src_dir/include/" || true
 cp "$overlay/build.zig" "$src_dir/build.zig"
 
 # ---------------------------------------------------------------------------
