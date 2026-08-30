@@ -36,8 +36,11 @@ jobs:
       - name: Cache vendored zat source
         uses: actions/cache@v4
         with:
+          # v2: the v1 key got poisoned by an empty save from the first
+          # failed run; the script now also falls back to fetching when a
+          # restored source isn't a real zat checkout.
           path: zat-swift/.vendor/zat-src
-          key: zat-src-${{ hashFiles('zat-swift/Scripts/sync-zat.sh', 'zat-swift/Vendor/zat-overlay/**') }}
+          key: zat-src-v2-${{ hashFiles('zat-swift/Scripts/sync-zat.sh', 'zat-swift/Vendor/zat-overlay/**') }}
 
       - name: Vendor + test zat-swift
         run: |

@@ -39,12 +39,15 @@ fi
 #    tarball (or a provided local checkout)
 # ---------------------------------------------------------------------------
 if [ -n "${ZAT_SRC_DIR:-}" ]; then
-    echo "==> using local zat source at $src_dir"
-    if [ ! -f "$src_dir/build.zig.zon" ]; then
-        echo "error: $src_dir does not look like a zat checkout (no build.zig.zon)" >&2
-        exit 1
+    if [ -f "$src_dir/build.zig.zon" ]; then
+        echo "==> using local zat source at $src_dir"
+    else
+        echo "warning: ZAT_SRC_DIR ($src_dir) has no build.zig.zon; falling back to zig fetch" >&2
+        unset ZAT_SRC_DIR
+        src_dir="$cache_dir/zat-src"
     fi
-else
+fi
+if [ -z "${ZAT_SRC_DIR:-}" ]; then
     url="${ZAT_URL:-https://tangled.org/zat.dev/zat/archive/main}"
     pin="${ZAT_PIN:-zat-0.4.5-5PuC7l6sDADAZQOBW-yKi6qnk67spfoYMRNoVpCUkvoC}"
     mkdir -p "$cache_dir"
