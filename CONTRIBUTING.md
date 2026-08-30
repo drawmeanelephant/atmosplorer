@@ -84,3 +84,6 @@ fails loudly on purpose — that's the supply-chain guard, don't bypass it.
 
 Small, focused PRs land much faster than large rewrites. When in doubt,
 open an issue first to talk through the approach.
+
+Maintainers cutting a release should follow `RELEASING.md` (semver policy and
+the tag-and-release process).

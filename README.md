@@ -25,7 +25,8 @@ browseable copy of someone's entire repo. Web clients can't do that; a native
 client can. That's the whole reason this app exists.
 
 Status: the first four roadmap milestones are landed (SwiftUI shell, offline
-cache, browseable content, local search).
+cache, browseable content, local search). For maintainers: how to version and
+ship a new tag is in `RELEASING.md`.
 
 ## Architecture
 
