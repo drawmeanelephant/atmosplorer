@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.2
 import PackageDescription
 
 // Swift wrapper over the zat AT Protocol explorer core (Zig, C ABI).

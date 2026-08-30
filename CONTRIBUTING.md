@@ -11,7 +11,8 @@ Prerequisites (same as the README):
 
 - **Zig 0.16+** — the vendored core is built from source, never fetched
   prebuilt.
-- **Swift 6.1+** (Xcode / CLT), macOS 13+.
+- **Swift 6.2+** (Xcode / CLT), macOS 13+ — 6.2 is the minimum toolchain
+  both packages declare (`swift-tools-version: 6.2`).
 
 A fresh clone needs the vendored core built once, because the
 `ZatC.xcframework` is a gitignored build artifact:

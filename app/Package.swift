@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.2
 import PackageDescription
 
 // Atmosplorer — SwiftUI desktop client over the zat AT Protocol explorer
