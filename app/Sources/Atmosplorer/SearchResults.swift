@@ -156,6 +156,7 @@ final class SearchModel: ObservableObject {
 
 /// Search results surface: one `RecordRow` per hit (the same row the
 /// collections use), each navigating to `RecordDetailView`.
+@MainActor
 struct SearchResultsView: View {
     @ObservedObject var model: SearchModel
 

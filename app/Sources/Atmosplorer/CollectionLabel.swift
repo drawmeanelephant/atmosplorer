@@ -4,6 +4,7 @@ import ZatAppCore
 /// A collection's display metadata: an SF Symbol tinted by the collection's
 /// color bucket, plus (unless icon-only) the human label. Used in the
 /// sidebar, the offline collections list, and every record row.
+@MainActor
 struct CollectionLabel: View {
     let nsid: String
     var iconOnly = false

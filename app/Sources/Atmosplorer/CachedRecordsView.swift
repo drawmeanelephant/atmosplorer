@@ -4,6 +4,7 @@ import ZatAppCore
 /// One collection's records from a decoded cached repo. Values are shaped as
 /// `ZatRecord` by `OfflineRepo`, so this reuses the live walk's rows and
 /// detail view exactly.
+@MainActor
 struct CachedRecordsView: View {
     let did: String
     let repo: OfflineRepo

@@ -6,6 +6,7 @@ import ZatAppCore
 /// repo** action (materialize a full offline copy in a single atomic
 /// download), a demoted live browse behind an opt-in toggle, and the offline
 /// cache library. Selecting a cached repo drives the fully-offline browse.
+@MainActor
 struct SidebarView: View {
     @ObservedObject var model: RootModel
     @ObservedObject var cacheModel: CacheModel

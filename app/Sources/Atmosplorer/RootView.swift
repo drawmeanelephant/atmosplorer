@@ -4,6 +4,7 @@ import ZatAppCore
 /// The window: sidebar (handle → identity → collections, plus the offline
 /// cache library) and a detail column that either walks the live records or
 /// browses a cached repo entirely offline.
+@MainActor
 struct RootView: View {
     @StateObject private var model = RootModel()
     @StateObject private var cacheModel = CacheModel()

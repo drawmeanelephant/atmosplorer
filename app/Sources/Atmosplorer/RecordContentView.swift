@@ -16,6 +16,7 @@ enum RecordContentPresentation {
 /// are CDN links that only resolve online — offline we show their captions
 /// and aspect ratios, not the pixels; live, the same view shows the image via
 /// an AsyncImage keyed on the original thumb/link when the embed carried one.
+@MainActor
 struct RecordContentView: View {
     let content: RecordContent
     var presentation: RecordContentPresentation = .detail

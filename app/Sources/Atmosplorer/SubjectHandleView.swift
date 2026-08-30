@@ -21,6 +21,7 @@ extension EnvironmentValues {
 /// the `IdentityResolver` in the environment; when no resolver is present (or
 /// the subject can't be resolved — e.g. fully offline), it just shows the
 /// fallback, so the offline browse never depends on the network.
+@MainActor
 struct SubjectHandleView: View {
     /// The DID/handle to resolve to a person's name.
     let identifier: String?

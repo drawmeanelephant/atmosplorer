@@ -5,6 +5,7 @@ import ZatAppCore
 /// A single record: the type-aware content presentation on top (same
 /// extraction as the list rows, in full detail form), then the record's
 /// at:// URI, CID, and full decoded body as a collapsible JSON tree.
+@MainActor
 struct RecordDetailView: View {
     let selection: RecordSelection
 
@@ -36,6 +37,7 @@ struct RecordDetailView: View {
 
 /// Recursive collapsible renderer for `ZatJSONValue`. Objects and arrays are
 /// DisclosureGroups; leaves are labeled rows.
+@MainActor
 struct JSONTreeView: View {
     let value: ZatJSONValue
 

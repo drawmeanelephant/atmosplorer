@@ -12,6 +12,7 @@ struct RecordSelection: Hashable {
 
 /// The detail column: one collection's records, paged, with navigation into
 /// each record's decoded JSON.
+@MainActor
 struct RecordsView: View {
     @StateObject private var model: RecordsModel
     private let collection: String

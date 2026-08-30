@@ -5,6 +5,7 @@ import ZatAppCore
 /// One row in the records list: a collection-tinted type icon + rkey, then a
 /// one-line preview of the body computed from the record's `$type` (posts show
 /// their text, likes show what was liked, follows show who was followed, etc.).
+@MainActor
 struct RecordRow: View {
     let uri: String
     let content: RecordContent

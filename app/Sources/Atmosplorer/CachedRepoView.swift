@@ -3,6 +3,7 @@ import ZatAppCore
 
 /// The detail column for a cached repo: its collections (derived from the
 /// decoded CAR — no network), drilling into each collection's records.
+@MainActor
 struct CachedRepoView: View {
     @StateObject private var model: CachedRepoBrowserModel
 
