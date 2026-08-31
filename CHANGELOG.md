@@ -8,6 +8,13 @@ See `RELEASING.md` for the versioning policy and the tag-and-release process.
 
 ## [Unreleased]
 
+### Added
+- **Star from any list.** Record rows in the collections browser, search
+  results, and live preview now carry a trailing star, so records can be
+  bookmarked straight from the list — the same toggle as the detail view's
+  toolbar star. The Favorites section's rows show a filled star that unstars
+  on click, alongside the existing context-menu remove.
+
 ## [0.2.0] - 2026-08-30
 
 ### Added
