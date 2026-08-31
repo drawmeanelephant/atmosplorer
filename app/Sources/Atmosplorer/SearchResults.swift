@@ -181,7 +181,7 @@ struct SearchResultsView: View {
                 ForEach(model.results, id: \.entry.path) { result in
                     let selection = model.selection(for: result)
                     NavigationLink(value: selection) {
-                        RecordRow(uri: selection.uri, value: selection.value)
+                        RecordRow(uri: selection.uri, cid: selection.cid, value: selection.value)
                     }
                 }
             }

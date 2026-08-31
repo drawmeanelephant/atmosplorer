@@ -278,7 +278,7 @@ struct SidebarView: View {
                 .padding(.top, 4)
             List(favoritesModel.favorites, selection: favoritesSelection) { favorite in
                 VStack(alignment: .leading, spacing: 2) {
-                    RecordRow(uri: favorite.uri, value: favorite.value)
+                    RecordRow(uri: favorite.uri, cid: favorite.cid, value: favorite.value)
                     Text(favorite.repoName)
                         .font(.caption)
                         .foregroundStyle(.secondary)
