@@ -15,6 +15,13 @@ See `RELEASING.md` for the versioning policy and the tag-and-release process.
   toolbar star. The Favorites section's rows show a filled star that unstars
   on click, alongside the existing context-menu remove.
 
+### Fixed
+- **Search actually runs in the offline browser.** The search trigger lived
+  in a view that didn't observe the query model, so typing published a query
+  nobody re-read — `search()` never fired and the results surface stayed
+  empty. The trigger now lives in the observing results view, so every
+  keystroke scores against the index.
+
 ## [0.2.0] - 2026-08-30
 
 ### Added

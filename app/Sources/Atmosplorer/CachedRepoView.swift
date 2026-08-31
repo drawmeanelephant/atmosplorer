@@ -9,6 +9,11 @@ struct CachedRepoView: View {
 
     /// Created once the repo finishes decoding; needs the decoded `OfflineRepo`
     /// to source the search entries and record values.
+    ///
+    /// A plain `@State` reference is deliberate: the active/inactive swap
+    /// happens inside `SearchResultsView` (which observes the model), so this
+    /// view only needs to know the reference exists — never to re-render on a
+    /// query publish.
     @State private var searchModel: SearchModel?
 
     init(did: String, displayName: String, cacheModel: CacheModel, offlineSession: AppSession) {
@@ -35,10 +40,11 @@ struct CachedRepoView: View {
                     }
                     .padding()
                 case .loaded:
-                    if let repo = model.offline {
-                        if let search = searchModel, search.isActive {
-                            SearchResultsView(model: search)
-                        } else {
+                    if let repo = model.offline, let search = searchModel {
+                        // SearchResultsView observes the model, so *it* flips
+                        // between the collections list (empty query) and the
+                        // results surface as you type.
+                        SearchResultsView(model: search) {
                             collectionsList(repo)
                         }
                     }
@@ -65,7 +71,6 @@ struct CachedRepoView: View {
                     searchModel = SearchModel(did: model.did, repo: repo, cache: model.cache)
                 }
             }
-            .task(id: searchModel?.query) { await searchModel?.search() }
         }
     }
 

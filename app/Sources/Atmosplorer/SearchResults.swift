@@ -154,13 +154,40 @@ final class SearchModel: ObservableObject {
     }
 }
 
-/// Search results surface: one `RecordRow` per hit (the same row the
-/// collections use), each navigating to `RecordDetailView`.
+/// One `RecordRow` per hit (the same row the collections use), each
+/// navigating to `RecordDetailView`.
+///
+/// This view — not the outer browser — decides between the collections list
+/// (empty query) and the results surface, because it observes `SearchModel`.
+/// The browser's `CachedRepoView` holds only a plain `@State` reference; had
+/// the swap lived there, typing would publish into a model nobody watches
+/// and never re-render the surface.
 @MainActor
-struct SearchResultsView: View {
+struct SearchResultsView<Inactive: View>: View {
     @ObservedObject var model: SearchModel
+    @ViewBuilder let inactive: () -> Inactive
+
+    init(model: SearchModel, @ViewBuilder inactive: @escaping () -> Inactive) {
+        self.model = model
+        self.inactive = inactive
+    }
 
     var body: some View {
+        Group {
+            if model.isActive {
+                resultsList
+            } else {
+                inactive()
+            }
+        }
+        // The search trigger lives here, not in the outer browser: this view
+        // observes the model, so a keystroke's query publish re-renders it and
+        // the task id re-evaluates — `.task(id:)` in a non-observing view
+        // never re-fires and search silently never runs.
+        .task(id: model.query) { await model.search() }
+    }
+
+    private var resultsList: some View {
         List {
             if model.isPreparing && model.results.isEmpty {
                 HStack(spacing: 8) {
