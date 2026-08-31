@@ -10,6 +10,7 @@ import ZatAppCore
 struct SidebarView: View {
     @ObservedObject var model: RootModel
     @ObservedObject var cacheModel: CacheModel
+    @ObservedObject var favoritesModel: FavoritesModel
     @Binding var handleInput: String
     @Binding var showLivePreview: Bool
 
@@ -32,6 +33,7 @@ struct SidebarView: View {
                 }
                 Divider()
             }
+            favoritesSection
             cachedSection
             Spacer(minLength: 0)
         }
@@ -241,7 +243,7 @@ struct SidebarView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .padding(.top, 4)
-            List(cacheModel.repos, selection: $cacheModel.selectedDid) { repo in
+            List(cacheModel.repos, selection: cachedSelection) { repo in
                 VStack(alignment: .leading, spacing: 2) {
                     Text(repo.displayName)
                         .font(.system(.body, design: .monospaced))
@@ -260,6 +262,59 @@ struct SidebarView: View {
             .listStyle(.sidebar)
             .frame(minHeight: 0, maxHeight: 200)
         }
+    }
+
+    // MARK: - favorites
+
+    /// The bookmarked-records section: newest first, each row opening the
+    /// same record detail view the browser uses — fully offline, since the
+    /// decoded value is stored with the favorite.
+    @ViewBuilder
+    private var favoritesSection: some View {
+        if !favoritesModel.favorites.isEmpty {
+            Text("Favorites")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.top, 4)
+            List(favoritesModel.favorites, selection: favoritesSelection) { favorite in
+                VStack(alignment: .leading, spacing: 2) {
+                    RecordRow(uri: favorite.uri, value: favorite.value)
+                    Text(favorite.repoName)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+                .contextMenu {
+                    Button("Remove from favorites", role: .destructive) {
+                        favoritesModel.remove(uri: favorite.uri)
+                    }
+                }
+            }
+            .listStyle(.sidebar)
+            .frame(minHeight: 0, maxHeight: 160)
+        }
+    }
+
+    /// Selecting a favorite clears the cached-repo selection so the detail
+    /// column shows the record, not a repo.
+    private var favoritesSelection: Binding<String?> {
+        Binding(
+            get: { favoritesModel.selectedURI },
+            set: { newValue in
+                favoritesModel.selectedURI = newValue
+                if newValue != nil { cacheModel.selectedDid = nil }
+            })
+    }
+
+    /// Selecting a cached repo clears the favorite selection so the detail
+    /// column shows the repo browser, not a saved record.
+    private var cachedSelection: Binding<String?> {
+        Binding(
+            get: { cacheModel.selectedDid },
+            set: { newValue in
+                cacheModel.selectedDid = newValue
+                if newValue != nil { favoritesModel.selectedURI = nil }
+            })
     }
 
     private func cachedRepoSubtitle(_ repo: CachedRepo) -> String {

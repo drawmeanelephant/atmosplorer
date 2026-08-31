@@ -113,6 +113,7 @@ final class OfflineRenderVerificationTests: XCTestCase {
     /// Mirrors what CachedRecordsView does: every record is wrapped in a
     /// RecordSelection and pushed into RecordDetailView, which renders the
     /// typed `.detail` presentation on top and the raw JSON tree below.
+    @MainActor
     func testDetailPresentationPathRendersTypedContent() async throws {
         guard ProcessInfo.processInfo.environment["ZAT_OFFLINE_VERIFY"] == "1" else {
             throw XCTSkip("opt-in: set ZAT_OFFLINE_VERIFY=1 with a populated app cache")
@@ -125,6 +126,14 @@ final class OfflineRenderVerificationTests: XCTestCase {
         let session = try AppSession(host: "https://offline.invalid")
         let decoded = try await session.decodeCar(try cache.load(did: target.did))
         let repo = OfflineRepo(did: target.did, recordCar: decoded)
+
+        // The window injects a FavoritesModel into the detail view (see
+        // RootView); the test supplies one backed by a throwaway directory so
+        // the real cache is never touched.
+        let favoritesDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("atmosplorer-render-tests-\(UUID().uuidString)", isDirectory: true)
+        let favorites = FavoritesModel(store: FavoritesStore(directory: favoritesDir))
+        defer { try? FileManager.default.removeItem(at: favoritesDir) }
 
         var checked = 0
         var detailTexts = 0
@@ -140,13 +149,13 @@ final class OfflineRenderVerificationTests: XCTestCase {
                 XCTAssertNotEqual(content.kind, .generic,
                     "detail of \(selection.uri) fell through to the generic dump")
 
-                // Force-build the detail view body. `body` is a computed
-                // @ViewBuilder property; evaluating it on MainActor proves
-                // the section inputs (typed content + JSON tree) resolve.
+                // Force-build the detail view body with the same environment
+                // the window provides. `body` is a computed @ViewBuilder
+                // property; evaluating it proves the section inputs (typed
+                // content + JSON tree + favorites star) resolve.
                 let view = RecordDetailView(selection: selection)
-                _ = try await MainActor.run { () -> Void in
-                    _ = view.body
-                }
+                    .environmentObject(favorites)
+                _ = view.body
 
                 // The JSON tree below the typed section must force-build too:
                 // every node in the record body must produce leaf text without

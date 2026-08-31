@@ -8,6 +8,7 @@ import ZatAppCore
 struct RootView: View {
     @StateObject private var model = RootModel()
     @StateObject private var cacheModel = CacheModel()
+    @StateObject private var favoritesModel = FavoritesModel()
     @State private var handleInput = ""
     /// Live browsing is an opt-in preview, off by default: the materialized
     /// copy (Mirror repo) is the primary browse.
@@ -16,15 +17,25 @@ struct RootView: View {
     var body: some View {
         NavigationSplitView {
             SidebarView(model: model, cacheModel: cacheModel,
+                        favoritesModel: favoritesModel,
                         handleInput: $handleInput, showLivePreview: $showLivePreview)
         } detail: {
             detailColumn
         }
+        .environmentObject(favoritesModel)
     }
 
     @ViewBuilder
     private var detailColumn: some View {
-        if let did = cacheModel.selectedDid,
+        if let uri = favoritesModel.selectedURI,
+           let favorite = favoritesModel.favorites.first(where: { $0.uri == uri }) {
+            // Offline: a saved record selected in the sidebar. The decoded
+            // value is stored with the favorite, so no network and no CAR.
+            NavigationStack {
+                RecordDetailView(selection: RecordSelection(
+                    uri: favorite.uri, cid: favorite.cid, value: favorite.value))
+            }
+        } else if let did = cacheModel.selectedDid,
            let offlineSession = cacheModel.offlineSession {
             // Offline: a cached repo selected in the sidebar. Decoding runs
             // on the offline session's queue and touches no network.

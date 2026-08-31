@@ -8,9 +8,16 @@ See `RELEASING.md` for the versioning policy and the tag-and-release process.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-30
+
 ### Added
-- `RELEASING.md` (semver policy + release process) and the pointer to it in
-  `README.md` / `CONTRIBUTING.md`.
+- **Favorites.** Star any record from its detail view and it's saved to an
+  on-disk `favorites.json` — the decoded value rides along, so the sidebar's
+  Favorites section reopens the record fully offline, even after the source
+  repo is no longer cached.
+- **Release tooling.** `RELEASING.md` (semver policy + the tag-and-release
+  process), `CHANGELOG.md` (this file, the release source of truth), and the
+  pointers to both in `README.md` / `CONTRIBUTING.md`.
 
 ## [0.1.0] - 2026-08-30
 
@@ -35,5 +42,6 @@ repos, fully offline.
   cache, and a hardened sync: retry-with-backoff on Tangled rate limits,
   fallback for a poisoned cache, and idempotent overlay copying.
 
-[Unreleased]: https://github.com/drawmeanelephant/atmosplorer/compare/v0.1.0...main
+[Unreleased]: https://github.com/drawmeanelephant/atmosplorer/compare/v0.2.0...main
+[0.2.0]: https://github.com/drawmeanelephant/atmosplorer/releases/tag/v0.2.0
 [0.1.0]: https://github.com/drawmeanelephant/atmosplorer/releases/tag/v0.1.0

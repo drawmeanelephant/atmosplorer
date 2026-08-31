@@ -7,6 +7,7 @@ import ZatAppCore
 /// at:// URI, CID, and full decoded body as a collapsible JSON tree.
 @MainActor
 struct RecordDetailView: View {
+    @EnvironmentObject private var favorites: FavoritesModel
     let selection: RecordSelection
 
     var body: some View {
@@ -28,6 +29,18 @@ struct RecordDetailView: View {
         }
         .navigationTitle(rkey)
         .textSelection(.enabled)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    favorites.toggle(selection)
+                } label: {
+                    Image(systemName: favorites.contains(selection.uri)
+                        ? "star.fill" : "star")
+                }
+                .help(favorites.contains(selection.uri)
+                    ? "Remove from favorites" : "Add to favorites")
+            }
+        }
     }
 
     private var rkey: String {
