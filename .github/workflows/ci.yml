@@ -28,7 +28,7 @@ jobs:
       # artifact); sync-zat.sh fetches the hash-pinned upstream zat and
       # regenerates it. Needs network + Zig 0.16+.
       - name: Install Zig 0.16
-        uses: goto-bus-stop/setup-zig@v2
+        uses: drawmeanelephant/zig-zouave@2d8510d62b517fa786279562cf8b1bdcf0c47b9f
         with:
           version: 0.16.0
 
