@@ -325,19 +325,6 @@ public final class RepoCache: @unchecked Sendable {
         directory.appendingPathComponent("\(did).car", isDirectory: false)
     }
 
-    private func namesURL(forRepo did: String) -> URL {
-        directory.appendingPathComponent("\(did).names.json", isDirectory: false)
-    }
-
-    /// Loads names without taking the lock (callers hold it).
-    private func loadNamesUnlocked(forRepo did: String) -> [String: String]? {
-        let url = namesURL(forRepo: did)
-        guard fileManager.fileExists(atPath: url.path),
-              let data = try? Data(contentsOf: url)
-        else { return nil }
-        return try? JSONDecoder().decode([String: String].self, from: data)
-    }
-
     private func readIndex() -> [String: Entry] {
         guard fileManager.fileExists(atPath: indexURL.path) else { return [:] }
         guard let data = try? Data(contentsOf: indexURL) else { return [:] }

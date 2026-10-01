@@ -58,7 +58,9 @@
   `libzat_c.a`).
 
 `Scripts/sync-zat.sh` fetches upstream with
-`zig fetch https://tangled.org/zat.dev/zat/archive/main` (hash-pinned), layers
+`zig fetch https://tangled.org/zat.dev/zat/archive/v0.4.5` (immutable tag,
+hash-pinned — *not* `archive/main`, which moved to 0.5.2 on 2026-09-30 and
+broke the pin), layers
 the overlay, runs `zig build`, repacks the archive for Apple's linker, and
 regenerates `zat-swift/Vendor/ZatC.xcframework` + copied header. A failed sync
 never clobbers the last good `Vendor/` output.

@@ -1,13 +1,13 @@
 # zat-swift
 
-Swift wrapper over the [zat](../DEVKITS/zat-main) AT Protocol explorer core
-(Zig, exposed through a C ABI).
+Swift wrapper over the [zat](https://tangled.org/zat.dev/zat) AT Protocol
+explorer core (Zig, exposed through a C ABI).
 
 ## Layout
 
 ```
 zat-swift/
-├── Package.swift               # tools-version 6.1; macOS 13+ / iOS 16+
+├── Package.swift               # tools-version 6.2; macOS 13+ / iOS 16+
 ├── Scripts/sync-zat.sh         # vendor upstream zat + overlay → build → repack → package
 ├── Vendor/
 │   ├── zat-overlay/            # OUR additions on top of upstream zat (checked in)
@@ -38,8 +38,9 @@ swift build && swift test
 
 `sync-zat.sh` never needs a `DEVKITS` checkout in this repo: it fetches the
 hash-pinned upstream zat package via `zig fetch`
-(`https://tangled.org/zat.dev/zat/archive/main`; override with
-`ZAT_URL`/`ZAT_PIN`, or point `ZAT_SRC_DIR` at a local checkout), layers
+(`https://tangled.org/zat.dev/zat/archive/v0.4.5` — an immutable tag, so
+upstream moving can't break the pin; override with `ZAT_REF`/`ZAT_URL`/`ZAT_PIN`,
+or point `ZAT_SRC_DIR` at a local checkout), layers
 `Vendor/zat-overlay/` on top, builds, repacks the archive for Apple's linker
 (8-byte alignment + compiler-rt bundling), and regenerates
 `Vendor/ZatC.xcframework` + the copied header. A failed sync never clobbers

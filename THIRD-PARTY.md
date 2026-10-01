@@ -40,7 +40,8 @@ zat-swift/Scripts/sync-zat.sh
 ```
 
 That script fetches the pinned upstream zat package the canonical Zig way —
-`zig fetch https://tangled.org/zat.dev/zat/archive/main`, verified against its
+`zig fetch https://tangled.org/zat.dev/zat/archive/v0.4.5` (an immutable tag,
+not a branch, so the pin can't be moved under us), verified against its
 package hash — extracts it into a gitignored cache, layers the overlay on
 top, runs `zig build`, repacks the archive for Apple's linker (8-byte
 alignment + compiler-rt bundling), and regenerates

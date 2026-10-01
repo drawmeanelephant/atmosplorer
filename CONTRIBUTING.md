@@ -60,18 +60,25 @@ ZAT_INTEGRATION=1 swift test --filter AppLiveTraversalIntegrationTests  # app
 
 ## Bumping the upstream zat pin
 
-`sync-zat.sh` fetches a hash-pinned tarball from `tangled.org/zat.dev/zat`.
+`sync-zat.sh` fetches a hash-pinned tarball of an upstream **tag** from
+`tangled.org/zat.dev/zat` (`ZAT_REF`, default `v0.4.5`). Never pin a branch:
+`archive/main` is a moving object, so the hash check then fails the moment
+upstream commits anything — which is what broke CI on 2026-09-30 when zat
+`main` rolled to 0.5.2 while our pin still said 0.4.5.
+
 To move to a newer upstream:
 
 ```sh
 # from a scratch dir with a build.zig (sync-zat.sh does this internally)
-zig fetch --save https://tangled.org/zat.dev/zat/archive/main
+zig fetch --save https://tangled.org/zat.dev/zat/archive/vX.Y.Z
 ```
 
-Take the printed `zat-X.Y.Z-<hash>` and update `ZAT_PIN` in
-`Scripts/sync-zat.sh` (and the version mentioned in `README.md` /
-`THIRD-PARTY.md`). If the fetch hash doesn't match the pin, `sync-zat.sh`
-fails loudly on purpose — that's the supply-chain guard, don't bypass it.
+Take the printed `zat-X.Y.Z-<hash>` and update **both** `ZAT_REF` and `ZAT_PIN`
+in `Scripts/sync-zat.sh` (and the version mentioned in `README.md` /
+`THIRD-PARTY.md`) — the script refuses to fetch when the two name different
+versions. If the fetch hash doesn't match the pin, `sync-zat.sh` fails loudly
+and immediately (one attempt, no retries) — that's the supply-chain guard,
+don't bypass it by pointing the URL at a branch.
 
 ## Pull request checklist
 

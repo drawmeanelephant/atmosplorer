@@ -1,9 +1,9 @@
 # Atmosplorer
 
-SwiftUI desktop client over the [zat](../DEVKITS/zat-main) AT Protocol explorer
-core, via the [zat-swift](../zat-swift) wrapper package.
+SwiftUI desktop client over the [zat](https://tangled.org/zat.dev/zat) AT
+Protocol explorer core, via the [zat-swift](../zat-swift) wrapper package.
 
-This covers milestones 1–3 of the roadmap in `DEVKITS/zat-main/HANDOFF.md`:
+This covers milestones 1–3 of the original handoff roadmap:
 a window that takes a handle, resolves it, lists its collections, and walks
 its records — plus the offline cache (download a repo's CAR once, then browse
 every record with zero network), and browseable content (posts, likes,
