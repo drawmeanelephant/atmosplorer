@@ -9,8 +9,16 @@
 # build wiring (C ABI library, header install, macOS 13.0 minimum-version
 # pin).
 #
+# The fetch ref is an immutable upstream TAG, never a branch. `archive/main`
+# moves whenever upstream does, and the hash pin then rejects the new tarball
+# — which is exactly how CI broke on 2026-09-30 when zat `main` rolled from
+# 0.4.5 to 0.5.2. Tag archives are content-addressed and permanent, so the
+# pin stays true until *we* decide to move.
+#
 # Environment overrides:
-#   ZAT_URL       upstream tarball URL (default https://tangled.org/zat.dev/zat/archive/main)
+#   ZAT_REF       upstream git ref to fetch (default v0.4.5)
+#   ZAT_URL       upstream tarball URL (default
+#                 https://tangled.org/zat.dev/zat/archive/$ZAT_REF)
 #   ZAT_PIN       expected package name+version+hash as printed by `zig fetch`
 #                 (default zat-0.4.5-5PuC7l6sDADAZQOBW-yKi6qnk67spfoYMRNoVpCUkvoC;
 #                 regenerate with `zig fetch --save <url>`)
@@ -48,13 +56,32 @@ if [ -n "${ZAT_SRC_DIR:-}" ]; then
     fi
 fi
 if [ -z "${ZAT_SRC_DIR:-}" ]; then
-    url="${ZAT_URL:-https://tangled.org/zat.dev/zat/archive/main}"
+    ref="${ZAT_REF:-v0.4.5}"
+    url="${ZAT_URL:-https://tangled.org/zat.dev/zat/archive/$ref}"
     pin="${ZAT_PIN:-zat-0.4.5-5PuC7l6sDADAZQOBW-yKi6qnk67spfoYMRNoVpCUkvoC}"
     mkdir -p "$cache_dir"
 
+    # The ref and the pin are two names for one decision: a bump that updates
+    # only one of them makes the next fetch "fail" with a hash mismatch that
+    # reads like a supply-chain attack. Check they agree before the network.
+    # Skipped when the caller supplies a whole custom ZAT_URL.
+    if [ -z "${ZAT_URL:-}" ]; then
+        case "$pin" in
+            "zat-${ref#v}-"*) ;;
+            *)
+                echo "error: fetching ref '$ref' but the pin says '$pin'." >&2
+                echo "       ZAT_REF and ZAT_PIN must name the same zat version - bump both," >&2
+                echo "       or override ZAT_URL/ZAT_PIN together." >&2
+                exit 1
+                ;;
+        esac
+    fi
+
     # `zig fetch` needs a build.zig to run in; a throwaway init project works.
-    # Tangled rate-limits (429s) are transient, so retry with backoff before
-    # giving up — a single 429 shouldn't fail a build.
+    # Tangled rate-limits (429s) are transient, so retry with backoff - but
+    # ONLY on transport errors. A fetch that succeeds and prints some other
+    # package name is a definitive answer (upstream moved, or the pin is
+    # stale); re-asking five times just hides it for a minute.
     fetched=""
     attempt=1
     while [ "$attempt" -le 5 ]; do
@@ -64,6 +91,10 @@ if [ -z "${ZAT_SRC_DIR:-}" ]; then
         rm -rf "$fetch_dir"
         case "$fetched" in
             "$pin") break ;;
+            zat-*)
+                # A real package name, just not ours: definitive, don't retry.
+                break
+                ;;
         esac
         if [ "$attempt" -lt 5 ]; then
             sleep $((attempt * 5))
@@ -72,10 +103,18 @@ if [ -z "${ZAT_SRC_DIR:-}" ]; then
     done
     case "$fetched" in
         "$pin") ;;
+        zat-*)
+            {
+                echo "error: zig fetch of '$url' returned '$fetched', expected '$pin'."
+                echo "       That URL is not the content we pinned. If it is a branch or a moved"
+                echo "       ref, pin an immutable tag instead (ZAT_REF=vX.Y.Z). To bump"
+                echo "       deliberately: 'zig fetch --save <url>', then update ZAT_REF, ZAT_PIN"
+                echo "       and the docs together."
+            } >&2
+            exit 1
+            ;;
         *)
-            echo "error: zig fetch returned '$fetched', expected '$pin'." >&2
-            echo "       The upstream changed or the pin is stale — run 'zig fetch --save <url>'" >&2
-            echo "       and update ZAT_PIN (and the docs) to match." >&2
+            echo "error: zig fetch of '$url' failed after 5 attempts: $fetched" >&2
             exit 1
             ;;
     esac

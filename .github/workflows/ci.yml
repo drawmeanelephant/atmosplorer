@@ -4,6 +4,9 @@ on:
   push:
     branches: ["main"]
   pull_request:
+  # Re-runnable on demand: the vendored core is fetched from Tangled, which
+  # rate-limits, so a red run can be retried without an empty commit.
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,6 +15,9 @@ concurrency:
 jobs:
   build-and-test:
     runs-on: macos-14
+    # macOS runners queue; a hung fetch or build otherwise burns the full
+    # 6-hour allowance before anything reports.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -32,9 +38,10 @@ jobs:
         with:
           version: 0.16.0
 
-      # The vendored source is hash-pinned upstream; cache it so CI only
-      # hits Tangled on the first run (it rate-limits 429s) and later runs
-      # skip the fetch entirely.
+      # The vendored source is pinned to an immutable upstream TAG; cache it so
+      # CI only hits Tangled on the first run (it rate-limits 429s) and later
+      # runs skip the fetch entirely. sync-zat.sh carries the tag + hash pin, so
+      # the key changes whenever either does.
       - name: Cache vendored zat source
         uses: actions/cache@v4
         with:
@@ -51,7 +58,12 @@ jobs:
           # the cache missed and the dir doesn't exist.
           chmod -R u+w zat-swift/.vendor/zat-src 2>/dev/null || true
           cd zat-swift
-          ZAT_SRC_DIR="$PWD/.vendor/zat-src" Scripts/sync-zat.sh
+          # Only hand the script the cached tree when it really is a zat
+          # checkout; otherwise let it fetch cleanly instead of warning.
+          if [ -f .vendor/zat-src/build.zig.zon ]; then
+            export ZAT_SRC_DIR="$PWD/.vendor/zat-src"
+          fi
+          Scripts/sync-zat.sh
           swift build
           swift test          # offline; live tests gated behind ZAT_INTEGRATION=1
 
