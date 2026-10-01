@@ -4,8 +4,9 @@ This directory is **our additions on top of upstream
 [zat](https://tangled.org/zat.dev/zat)** (MIT, © nate nowack / zzstoatzz.io).
 `Scripts/sync-zat.sh` fetches the upstream zat package the canonical Zig way
 — `zig fetch` of the hash-pinned tarball
-(`https://tangled.org/zat.dev/zat/archive/main`, verified against its package
-hash) — layers this overlay over it, builds the C ABI static library, repacks
+(`https://tangled.org/zat.dev/zat/archive/v0.4.5` — an immutable **tag**, never
+a branch, verified against its package hash) — layers this overlay over it,
+builds the C ABI static library, repacks
 it for Apple's linker, and packages `Vendor/ZatC.xcframework` + copies
 `Sources/Czat/include/zat.h`.
 
@@ -66,8 +67,11 @@ wrapper + app suites.
 
 ## Updating the overlay when upstream bumps
 
-- Run `zig fetch --save https://tangled.org/zat.dev/zat/archive/main` and update
-  `ZAT_PIN` in `Scripts/sync-zat.sh` to the printed name+version+hash.
+- Run `zig fetch --save https://tangled.org/zat.dev/zat/archive/vX.Y.Z` (the
+  **tag**, not `main` — branch archives move under the pin and break CI) and
+  update *both* `ZAT_REF` and `ZAT_PIN` in `Scripts/sync-zat.sh` to the new
+  tag and the printed name+version+hash. The script refuses to fetch when the
+  two disagree.
 - Rebase `build.zig` against the new upstream `build.zig` (keep the C ABI
   block + min-version pin on top; keep it trimmed to what the package ships).
 - Re-verify `explorer.zig` against any changed upstream APIs (XRPC client,

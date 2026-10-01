@@ -16,6 +16,14 @@ See `RELEASING.md` for the versioning policy and the tag-and-release process.
   on click, alongside the existing context-menu remove.
 
 ### Fixed
+- **The vendored zat pin no longer rides upstream's `main`.** `sync-zat.sh`
+  fetched the `archive/main` tarball and then checked it against the 0.4.5 hash
+  pin, so every build broke the moment upstream moved — and it has: `main` is
+  0.5.2 now, which turned CI red on 2026-09-30. The fetch now targets the
+  immutable `v0.4.5` tag (`ZAT_REF`), `ZAT_REF`/`ZAT_PIN` are cross-checked
+  before any network call, and a package name that doesn't match the pin fails
+  on the first attempt instead of burning five retries on it. CI also gains
+  `workflow_dispatch` and a 45-minute job timeout.
 - **Search actually runs in the offline browser.** The search trigger lived
   in a view that didn't observe the query model, so typing published a query
   nobody re-read — `search()` never fired and the results surface stayed

@@ -4,7 +4,8 @@ import PackageDescription
 // Swift wrapper over the zat AT Protocol explorer core (Zig, C ABI).
 //
 // The prebuilt static library in Vendor/ is produced by Scripts/sync-zat.sh,
-// which runs `zig build` in ../DEVKITS/zat-main and copies the artifacts in.
+// which fetches the tag-pinned upstream zat, layers Vendor/zat-overlay on top,
+// runs `zig build` in .vendor/zat-src, and copies the artifacts in.
 let package = Package(
     name: "zat-swift",
     platforms: [
